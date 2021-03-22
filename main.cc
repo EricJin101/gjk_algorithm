@@ -2,7 +2,7 @@
 
 int main() {
     cout << "多边形已经输入完成。" << endl;
-    //
+    // 22号没有提交
     eric::collision_detect::point temp{};
     temp.x = 4;
     temp.y = 11;
