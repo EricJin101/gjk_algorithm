@@ -22,6 +22,7 @@ namespace eric{
         }
         bool point_in_triangle(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3)
         {
+            //judge point in triangle or not
             double ABC = isTriangleOrArea(x1,y1,x2,y2,x3,y3);// 是否为三角形
             double PBC = isTriangleOrArea(x,y,x2,y2,x3,y3);
             double PAC = isTriangleOrArea(x1,y1,x,y,x3,y3);
@@ -31,7 +32,7 @@ namespace eric{
 
         void find_new_ploy()
         {
-
+            // 两个矩形获得的凸多边形，每3条判断一回是否在三角形内
         }
 
     }
