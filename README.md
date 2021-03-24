@@ -1,1 +1,3 @@
 # gjk_algorithm
+
+## note
