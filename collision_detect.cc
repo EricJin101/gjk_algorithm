@@ -48,15 +48,42 @@ namespace eric{
             }
             return false;
         }
+        double computeKa(point p1, point p2){
+            double disX = p2.x - p1.x;
+            double disY = p2.y - p1.y;
+            if (disX == 0)
+            {
+                return disY > 0 ? INT_MAX : INT_MIN;
+            }
+            return disY / disX;
+        }
+        int findNextEdge(const Polygon& convex_polygon, int now, double &nowK, bool &flag)
+        {
+            /**
+             * flag用于判断是不是找到横坐标最大的点，找到最大点之后再往回找
+             * **/
+        }
         bool convex_method(Polygon& poly1, Polygon& poly2)
         {
+            polygon_minus(poly1, poly2);
+            Polygon convex_polygon;
+            convex_polygon = minkowski_diff;
+            sort(convex_polygon.begin(), convex_polygon.end(),
+                 [](const point &p1, const point &p2){
+                     return p1.y > p2.y;
+                 });//坐标系按照y从大到小排列、algorithm
+            stable_sort(convex_polygon.begin(), convex_polygon.end(),
+                        [](const point &p1, const point &p2){
+                            return p1.x < p2.x;
+                        });//左到右
+            Polygon convex_edge;
 
         }
 
         bool gjk_method(Polygon& poly1, Polygon& poly2)
         {
             //
-
+            // find a vector direction
         }
 
         void collisionDetection(Polygon& poly1, Polygon& poly2)

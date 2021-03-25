@@ -7,6 +7,8 @@
 #include "iostream"
 #include "cmath"
 #include "vector"
+#include <algorithm>
+#include <limits.h>
 using namespace std;
 namespace eric{
     namespace collision_detect{
@@ -35,6 +37,8 @@ namespace eric{
                 }
             }
         }
+
+
     }
 }
 #endif //GJK_COLLISION_DETECT_H
