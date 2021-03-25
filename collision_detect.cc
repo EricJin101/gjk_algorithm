@@ -72,7 +72,7 @@ namespace eric{
             }
             return false;
         }
-        int findNextEdge(const Polygon& convex_polygon, int now, double &nowK, bool &flag, Polygon& convex_edge)
+        void findNextEdge(const Polygon& convex_polygon, int now, int &nowK, Polygon& convex_edge)
         {
             /**
              * flag用于判断是不是找到横坐标最大的点，找到最大点之后再往回找
@@ -82,12 +82,24 @@ namespace eric{
              if (!in_edge(convex_edge, temp))
              {
                 //now这个点不在边界里面，再判断找出最大的斜率
+                double temp_k = 0;
                 for (int i{0}; i < convex_polygon.size(); ++i)
                 {
-                    //
+                    point calculate_point{};
+                    calculate_point = convex_polygon[i];
+                    if (in_edge(convex_edge, calculate_point))
+                    {
+                        continue;
+                    }
+                    double k = computeKa(temp, convex_polygon[i]);//求所有点的斜率k
+                    if (k > temp_k)
+                    {
+                        temp_k = k;
+                        nowK = i;//记录下当前点
+                    }
                 }
+                convex_edge.push_back(convex_polygon[nowK]);
              }
-
         }
         bool convex_method(Polygon& poly1, Polygon& poly2)
         {
@@ -103,7 +115,16 @@ namespace eric{
                             return p1.x < p2.x;
                         });//左到右
             Polygon convex_edge;
+            int now = 0;//当前点
+            int nowK = 1;//下一个边界点,在convex_polygon中的id
+            point next_point{};
+            next_point = convex_polygon[now];
+            convex_edge.push_back(next_point);
             // find next edge
+            while (0 != nowK)
+            {
+                findNextEdge(convex_polygon, now, nowK, convex_edge);
+            }
 
         }
 
