@@ -114,6 +114,27 @@ namespace eric{
 
              }
         }
+        bool half_line_method(Polygon& convex_edge)
+        {//原点位0,0
+            int nCross = 0;
+            for (int i{0}; i < convex_edge.size(); i++)
+            {//找没一个坐标点
+                Point p1 = convex_edge[i];
+                Point p2 = convex_edge[(i + 1) % nCount];// 最后一个点与第一个点连线
+                if (p1.y == p2.y)
+                    continue;
+                if (p.y < min<double>(p1.y, p2.y))
+                    continue;
+                if (p.y >= max<double>(p1.y, p2.y))
+                    continue;
+                double x = (double)(p.y - p1.y) * (double)(p2.x - p1.x) / (double)(p2.y - p1.y) + p1.x;// 求交点的x坐标
+                if (x > p.x)
+                {// 正方向点,如果在右边
+                    nCross++;
+                }
+            }
+            return (nCross % 2 == 1);// 交点为偶数，点在多边形之外
+        }
         bool convex_method(Polygon& poly1, Polygon& poly2)
         {
             polygon_minus(poly1, poly2);
