@@ -47,7 +47,6 @@ int main() {
         temp.x = 7;
         temp.y = 3;
         eric::collision_detect::polygon2.push_back(temp);
-
         eric::collision_detect::find_new_ploy(eric::collision_detect::polygon1,
                                               eric::collision_detect::polygon2);
 

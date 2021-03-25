@@ -66,7 +66,10 @@ namespace eric{
                 }
             }
         }
-
+        bool gjk_detect()
+        {
+            //
+        }
 
     }
 }
