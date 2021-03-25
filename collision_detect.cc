@@ -85,11 +85,13 @@ namespace eric{
              point temp{};
              temp = convex_polygon[now];
              if (!in_edge(convex_edge, temp))
-             {
+             {//判断点在不在边界点中
                 //now这个点不在边界里面，再判断找出最大的斜率
                 double temp_k = 0;
-                for (int i{0}; i < convex_polygon.size(); ++i)
-                {
+                int i = 0;
+                for (; i < convex_polygon.size(); ++i)
+                {//遍历所有顶点
+                    // 如果这个点不在边界点中，就计算与当前点的斜率
                     point calculate_point{};
                     calculate_point = convex_polygon[i];
                     if (in_edge(convex_edge, calculate_point))
@@ -99,18 +101,24 @@ namespace eric{
                     double k = computeKa(temp, convex_polygon[i]);//求所有点的斜率k
                     if (k > temp_k)
                     {
-                        temp_k = k;
-                        nowK = i;//记录下当前点
+                        temp_k = k;//寻找最大的斜率
+                        nowK = i;//记录，下一个点在顶点vector中的位置
                     }
                 }
-                convex_edge.push_back(convex_polygon[nowK]);
+                point final_point{};
+                final_point = convex_polygon[nowK];
+                if (!in_edge(convex_edge, final_point))
+                {//最后斜率最大的点不在边界点中，就添加到边界点
+                    convex_edge.push_back(convex_polygon[nowK]);
+                }
+
              }
         }
         bool convex_method(Polygon& poly1, Polygon& poly2)
         {
             polygon_minus(poly1, poly2);
             Polygon convex_polygon;
-            convex_polygon = minkowski_diff;
+            convex_polygon = minkowski_diff;//两个矩阵相减之后所有顶点
             sort(convex_polygon.begin(), convex_polygon.end(),
                  [](const point &p1, const point &p2){
                      return p1.y > p2.y;
@@ -119,12 +127,12 @@ namespace eric{
                         [](const point &p1, const point &p2){
                             return p1.x < p2.x;
                         });//左到右
-            Polygon convex_edge;
-            int now = 0;//当前点
+            Polygon convex_edge;//凸多边形的各个顶点
+            int now = 0;//在所有顶点中的位置
             int nowK = 1;//下一个边界点,在convex_polygon中的id
             point next_point{};
             next_point = convex_polygon[now];
-            convex_edge.push_back(next_point);
+            convex_edge.push_back(next_point);//先将第一个点加在边界点中，最左边一个点
             // find next edge
             while (0 != nowK)
             {
