@@ -57,11 +57,37 @@ namespace eric{
             }
             return disY / disX;
         }
-        int findNextEdge(const Polygon& convex_polygon, int now, double &nowK, bool &flag)
+        bool in_edge(Polygon& convex_edge, point& p1)
+        {
+            /**
+             * @param convex_edge是凸多边形的边界
+             * @param p1是某一点
+             * @return true代表p1在convex_edge中, false代表p1不在convex_edge中**/
+            for (int i{0}; i < convex_edge.size(); ++i)
+            {
+                if (convex_edge[i].x == p1.x && convex_edge[i].y == p1.y)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        int findNextEdge(const Polygon& convex_polygon, int now, double &nowK, bool &flag, Polygon& convex_edge)
         {
             /**
              * flag用于判断是不是找到横坐标最大的点，找到最大点之后再往回找
              * **/
+             point temp{};
+             temp = convex_polygon[now];
+             if (!in_edge(convex_edge, temp))
+             {
+                //now这个点不在边界里面，再判断找出最大的斜率
+                for (int i{0}; i < convex_polygon.size(); ++i)
+                {
+                    //
+                }
+             }
+
         }
         bool convex_method(Polygon& poly1, Polygon& poly2)
         {
@@ -77,6 +103,7 @@ namespace eric{
                             return p1.x < p2.x;
                         });//左到右
             Polygon convex_edge;
+            // find next edge
 
         }
 
