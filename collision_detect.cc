@@ -11,12 +11,15 @@ namespace eric{
 
         double isTriangleOrArea(double x1, double y1, double x2, double y2, double x3, double y3)
         {
+            /**
+             * 是否为三角形**/
             return abs((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2.0);
         }
         bool point_in_triangle(double x, double y, double x1, double y1,
                 double x2, double y2, double x3, double y3)
         {
-            //judge point in triangle or not
+            /**
+             * 判断x,y 在不在由(x1,y1), (x2,y2), (x3,y3)组成的三角形内**/
             double ABC = isTriangleOrArea(x1,y1,x2,y2,x3,y3);// 是否为三角形
             double PBC = isTriangleOrArea(x,y,x2,y2,x3,y3);
             double PAC = isTriangleOrArea(x1,y1,x,y,x3,y3);
@@ -25,6 +28,8 @@ namespace eric{
         }
         bool triangle_method()
         {
+            /**
+             * 选择三条边，组成三条三角形，判断原点在不在其内**/
             for (int i{0}; i < minkowski_diff.size(); ++i)
             {
                 for (int j{i+1}; j < minkowski_diff.size() -1; ++j)
