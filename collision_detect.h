@@ -20,6 +20,7 @@ namespace eric{
         Polygon polygon2;
         Polygon minkowski_diff;
         bool collision_occurs{false};
+        string collision_method;
 
         void polygon_minus(Polygon& poly1, Polygon& poly2)
         {// polygon minus

@@ -4,6 +4,11 @@
 #include "collision_detect.h"
 namespace eric{
     namespace collision_detect{
+        void method_define(string& method)
+        {
+            collision_method = method;
+        }
+
         double isTriangleOrArea(double x1, double y1, double x2, double y2, double x3, double y3)
         {
             return abs((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2.0);
@@ -18,10 +23,8 @@ namespace eric{
             double PAB = isTriangleOrArea(x1,y1,x2,y2,x,y);
             return (ABC == PBC + PAC + PAB);
         }
-
-        bool find_new_ploy(Polygon& poly1, Polygon& poly2)
-        {// 每3条判断一回是否在三角形内
-            polygon_minus(poly1, poly2);
+        bool triangle_method()
+        {
             for (int i{0}; i < minkowski_diff.size(); ++i)
             {
                 for (int j{i+1}; j < minkowski_diff.size() -1; ++j)
@@ -45,11 +48,22 @@ namespace eric{
             }
             return false;
         }
+        bool convex_method(Polygon& poly1, Polygon& poly2)
+        {
 
-        bool gjk_detect(Polygon& poly1, Polygon& poly2)
+        }
+
+        bool gjk_method(Polygon& poly1, Polygon& poly2)
         {
             //
 
+        }
+
+        void collisionDetection(Polygon& poly1, Polygon& poly2)
+        {
+            polygon_minus(poly1, poly2);
+            bool triangle_result = triangle_method();
+//            return result;
         }
 
     }
