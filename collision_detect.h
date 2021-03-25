@@ -15,8 +15,10 @@ namespace eric{
             double x;
             double y;
         };
-        typedef vector<point> Point;
-        Point tri;
+        typedef vector<point> Polygon;
+        Polygon polygon1;
+        Polygon polygon2;
+        bool collision_occurs{false};
     }
 }
 #endif //GJK_COLLISION_DETECT_H
