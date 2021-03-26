@@ -158,22 +158,36 @@ namespace eric{
             }
             if (half_line_method(convex_edge)) {cout << "in side" << endl;}
         }
-        void getFarthestPointInDirection(point direction, point &pos_far, point &neg_far)
+        void getFarthestPointInDirection(point direction, point &pos_far, point &neg_far, point &up_far)
         {
             /**
              * direction 为向量方向
              * pos_far正方向上最远端
              * neg_far反方向上最远端*/
-             double delta_x = INT_MIN;
+             double x_min = INT_MIN;
+             double x_max = INT_MAX;
+             double y_max = INT_MAX;
              int idx_min {0};
              int idx_max {0};
+             int idx_y_max {0};
              for (int i{0}; i < minkowski_diff.size(); ++i)
              {
-                 if (minkowski_diff[i].x > delta_x)
+                 if (minkowski_diff[i].x > x_min)
+                 {
+                     idx_max = i;
+                 }
+                 if (minkowski_diff[i].x < x_max)
                  {
                      idx_min = i;
                  }
+                 if (minkowski_diff[i].y < y_max)
+                 {
+                     idx_y_max = i;
+                 }
              }
+             pos_far = minkowski_diff[idx_max];
+             neg_far = minkowski_diff[idx_min];
+             up_far = minkowski_diff[idx_y_max];
         }
         bool gjk_method(Polygon& poly1, Polygon& poly2)
         {
@@ -182,8 +196,8 @@ namespace eric{
             point p1{}, p2{}, p3{}, p4{}, direction{};//分别为d方向最大最小，垂直方向最大最小
             vector_d.x = 1;
             vector_d.y = 0;
-            getFarthestPointInDirection(vector_d, p1, p2);
-
+            getFarthestPointInDirection(vector_d, p1, p2, p3);
+            point_in_triangle(0,0,p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
             direction.x = 1;
             direction.y = 2;
             // direction1 , p1 p2
