@@ -117,7 +117,7 @@ namespace eric{
         bool half_line_method(Polygon& convex_edge)
         {
             int nCross = 0;//多少条相交线
-            for (int i{0}; i < convex_edge.size(); i++)
+            for (int i{0}; i < convex_edge.size() - 1; i++)
             {
                 point p1 = convex_edge[i];
                 point p2 = convex_edge[(i + 1) % convex_edge.size()];// 最后一个点与第一个点连线
