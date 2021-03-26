@@ -62,21 +62,6 @@ namespace eric{
             }
             return disY / disX;
         }
-        bool in_edge(Polygon& convex_edge, point& p1)
-        {
-            /**
-             * @param convex_edge是凸多边形的边界
-             * @param p1是某一点
-             * @return true代表p1在convex_edge中, false代表p1不在convex_edge中**/
-            for (int i{0}; i < convex_edge.size(); ++i)
-            {
-                if (convex_edge[i].x == p1.x && convex_edge[i].y == p1.y)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
         int findNextEdge(const Polygon& convex_polygon, int now, int &nowK, Polygon& convex_edge, bool &flag)
         {
             /**
@@ -113,35 +98,6 @@ namespace eric{
                 }
                 nowK = maxK;
                 return max;
-            }
-
-
-             point temp{};
-             temp = convex_polygon[now];//当前点
-            //now这个点不在边界里面，再判断找出最大的斜率
-            double temp_k = INT_MIN;
-            int i = 0;
-            for (; i < convex_polygon.size(); ++i)
-            {//遍历所有顶点
-                // 如果这个点不在边界点中，就计算与当前点的斜率
-                point calculate_point{};
-                calculate_point = convex_polygon[i];
-                if (in_edge(convex_edge, calculate_point))
-                {
-                    continue;
-                }
-                double k = computeKa(temp, convex_polygon[i]);//求所有点的斜率k
-                if (k > temp_k)
-                {
-                    temp_k = k;//寻找最大的斜率
-                    nowK = i;//记录，下一个点在顶点vector中的位置
-                }
-            }
-            point final_point{};
-            final_point = convex_polygon[nowK];
-            if (!in_edge(convex_edge, final_point))
-            {//最后斜率最大的点不在边界点中，就添加到边界点
-                convex_edge.push_back(convex_polygon[nowK]);
             }
         }
         bool half_line_method(Polygon& convex_edge)
@@ -212,9 +168,15 @@ namespace eric{
         void collisionDetection(Polygon& poly1, Polygon& poly2, string method_select)
         {
             polygon_minus(poly1, poly2);
-            bool triangle_result = triangle_method();
             cout << method_select << endl;
-            convex_method(poly1, poly2);
+            if (method_select == "convex")
+            {
+                convex_method(poly1, poly2);
+            }else if (method_select == "triangle")
+            {
+                bool triangle_result = triangle_method();
+            }
+
 //            return result;
         }
 
