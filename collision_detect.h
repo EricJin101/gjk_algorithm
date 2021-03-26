@@ -24,6 +24,18 @@ namespace eric{
         bool collision_occurs{false};
         string collision_method;
 
+        bool point_in_vector(Polygon polygon, point& p1)
+        {// 判断点在不在多边形顶点中（vector）
+            for (int i{0}; i < polygon.size(); ++i)
+            {
+                if (polygon[i].x == p1.x && polygon[i].y == p1.y)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         void polygon_minus(Polygon& poly1, Polygon& poly2)
         {// polygon minus
             for (int p1{0}; p1 < poly1.size(); ++p1)
@@ -33,7 +45,10 @@ namespace eric{
                     point tem_p{};
                     tem_p.x = poly1[p1].x - poly2[p2].x;
                     tem_p.y = poly1[p1].y - poly2[p2].y;
-                    minkowski_diff.push_back(tem_p);
+                    if (!point_in_vector(minkowski_diff, tem_p))
+                    {
+                        minkowski_diff.push_back(tem_p);
+                    }
                 }
             }
         }

@@ -1,4 +1,5 @@
-# gjk_algorithm
+# gjk_algorithm learning
+- 2D algorithm
 
 ## Introduction
 - GJK 简写为 Gilbert–Johnson–Keerthi
@@ -34,3 +35,4 @@
 - 求反方向的最大点
 - 垂直方向再次计算
 - > 不理解好处在哪里
+  > 比三角形那个理论上会快一些，因为gjk选择的是最远的（最大面积）

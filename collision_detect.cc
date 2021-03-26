@@ -62,57 +62,64 @@ namespace eric{
             }
             return disY / disX;
         }
-        bool in_edge(Polygon& convex_edge, point& p1)
-        {
-            /**
-             * @param convex_edge是凸多边形的边界
-             * @param p1是某一点
-             * @return true代表p1在convex_edge中, false代表p1不在convex_edge中**/
-            for (int i{0}; i < convex_edge.size(); ++i)
-            {
-                if (convex_edge[i].x == p1.x && convex_edge[i].y == p1.y)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        void findNextEdge(const Polygon& convex_polygon, int now, int &nowK, Polygon& convex_edge)
+        int findNextEdge(const Polygon& convex_polygon, int now, double &nowK, Polygon& convex_edge, bool &flag)
         {
             /**
              * flag用于判断是不是找到横坐标最大的点，找到最大点之后再往回找
              * **/
-             point temp{};
-             temp = convex_polygon[now];
-             if (!in_edge(convex_edge, temp))
-             {//判断点在不在边界点中
-                //now这个点不在边界里面，再判断找出最大的斜率
-                double temp_k = 0;
-                int i = 0;
-                for (; i < convex_polygon.size(); ++i)
-                {//遍历所有顶点
-                    // 如果这个点不在边界点中，就计算与当前点的斜率
-                    point calculate_point{};
-                    calculate_point = convex_polygon[i];
-                    if (in_edge(convex_edge, calculate_point))
+            if (flag)
+            {
+                int max = now + 1;
+                double maxK = computeKa(convex_polygon[now],convex_polygon[max]);
+                for (unsigned i = now + 2; i < convex_polygon.size(); i++)
+                {
+                    double k = computeKa(convex_polygon[now],convex_polygon[i]);
+                    if (k > maxK && k <= nowK)
                     {
-                        continue;
-                    }
-                    double k = computeKa(temp, convex_polygon[i]);//求所有点的斜率k
-                    if (k > temp_k)
-                    {
-                        temp_k = k;//寻找最大的斜率
-                        nowK = i;//记录，下一个点在顶点vector中的位置
+                        max = i;
+                        maxK = k;
                     }
                 }
-                point final_point{};
-                final_point = convex_polygon[nowK];
-                if (!in_edge(convex_edge, final_point))
-                {//最后斜率最大的点不在边界点中，就添加到边界点
-                    convex_edge.push_back(convex_polygon[nowK]);
+                nowK = maxK;
+                return max;
+            }
+            else
+            {
+                int max = now - 1;
+                double maxK = computeKa(convex_polygon[max],convex_polygon[now]);
+                for (int i = now - 2; i >= 0; i--)
+                {
+                    double k = computeKa(convex_polygon[i],convex_polygon[now]);
+                    if (k > maxK && k <= nowK)
+                    {
+                        max = i;
+                        maxK = k;
+                    }
                 }
-
-             }
+                nowK = maxK;
+                return max;
+            }
+        }
+        bool half_line_method(Polygon& convex_edge)
+        {
+            int nCross = 0;//多少条相交线
+            for (int i{0}; i < convex_edge.size() - 1; i++)
+            {
+                point p1 = convex_edge[i];
+                point p2 = convex_edge[(i + 1) % convex_edge.size()];// 最后一个点与第一个点连线
+                if (p1.y == p2.y)
+                    continue;
+                if (0 < min<double>(p1.y, p2.y))
+                    continue;//在两个点下面
+                if (0 >= max<double>(p1.y, p2.y))
+                    continue;//在两个点上面
+                double x = (double)(0 - p1.y) * (double)(p2.x - p1.x) / (double)(p2.y - p1.y) + p1.x;// 求交点的x坐标
+                if (x > 0)
+                {
+                    nCross++;// 只统计p1p2与p向右射线的交点
+                }
+            }
+            return (nCross % 2 == 1);//交点为偶数，点在多边形之外
         }
         bool half_line_method(Polygon& convex_edge)
         {//原点位0,0
@@ -150,29 +157,86 @@ namespace eric{
                         });//左到右
             Polygon convex_edge;//凸多边形的各个顶点
             int now = 0;//在所有顶点中的位置
-            int nowK = 1;//下一个边界点,在convex_polygon中的id
+            double nowK = INT_MAX;//下一个边界点,在convex_polygon中的id
             point next_point{};
             next_point = convex_polygon[now];
+            bool flag{true};
+            now = findNextEdge(convex_polygon, now, nowK, convex_edge, flag);
             convex_edge.push_back(next_point);//先将第一个点加在边界点中，最左边一个点
-            // find next edge
-            while (0 != nowK)
+            while (0 != now)
             {
-                findNextEdge(convex_polygon, now, nowK, convex_edge);
+                if (now == convex_polygon.size() - 1)
+                {
+                    flag = false;
+                    nowK = INT_MAX;
+                }
+                convex_edge.push_back(convex_polygon[now]);
+                now = findNextEdge(convex_polygon, now, nowK, convex_edge, flag);
             }
-
+            for (int jj{0}; jj < convex_edge.size(); ++jj)
+            {
+                cout << convex_edge[jj].x << "," << convex_edge[jj].y << endl;
+            }
+            if (half_line_method(convex_edge)) {cout << "in side" << endl;}
         }
-
+        void getFarthestPointInDirection(point direction, point &pos_far, point &neg_far, point &up_far)
+        {
+            /**
+             * direction 为向量方向
+             * pos_far正方向上最远端
+             * neg_far反方向上最远端*/
+             double x_min = INT_MIN;
+             double x_max = INT_MAX;
+             double y_max = INT_MAX;
+             int idx_min {0};
+             int idx_max {0};
+             int idx_y_max {0};
+             for (int i{0}; i < minkowski_diff.size(); ++i)
+             {
+                 if (minkowski_diff[i].x > x_min)
+                 {
+                     idx_max = i;
+                 }
+                 if (minkowski_diff[i].x < x_max)
+                 {
+                     idx_min = i;
+                 }
+                 if (minkowski_diff[i].y < y_max)
+                 {
+                     idx_y_max = i;
+                 }
+             }
+             pos_far = minkowski_diff[idx_max];
+             neg_far = minkowski_diff[idx_min];
+             up_far = minkowski_diff[idx_y_max];
+        }
         bool gjk_method(Polygon& poly1, Polygon& poly2)
         {
-            //
-            // find a vector direction
+            //从minkowski中选，然后最大方向的两个点，垂直方向再选两个最大点
+            point vector_d{};
+            point p1{}, p2{}, p3{}, p4{}, direction{};//分别为d方向最大最小，垂直方向最大最小
+            vector_d.x = 1;
+            vector_d.y = 0;
+            getFarthestPointInDirection(vector_d, p1, p2, p3);
+            point_in_triangle(0,0,p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
+            direction.x = 1;
+            direction.y = 2;
         }
 
-        void collisionDetection(Polygon& poly1, Polygon& poly2)
+        void collisionDetection(Polygon& poly1, Polygon& poly2, string method_select)
         {
             polygon_minus(poly1, poly2);
-            bool triangle_result = triangle_method();
-//            return result;
+            cout << method_select << endl;
+            if (method_select == "convex")
+            {
+                convex_method(poly1, poly2);
+            }else if (method_select == "triangle")
+            {
+                bool triangle_result = triangle_method();
+            }else if (method_select == "gjk")
+            {
+                gjk_method(poly1, poly2);
+            }
         }
 
     }
