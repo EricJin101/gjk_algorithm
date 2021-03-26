@@ -62,7 +62,7 @@ namespace eric{
             }
             return disY / disX;
         }
-        int findNextEdge(const Polygon& convex_polygon, int now, int &nowK, Polygon& convex_edge, bool &flag)
+        int findNextEdge(const Polygon& convex_polygon, int now, double &nowK, Polygon& convex_edge, bool &flag)
         {
             /**
              * flag用于判断是不是找到横坐标最大的点，找到最大点之后再往回找
@@ -136,7 +136,7 @@ namespace eric{
                         });//左到右
             Polygon convex_edge;//凸多边形的各个顶点
             int now = 0;//在所有顶点中的位置
-            int nowK = INT_MAX;//下一个边界点,在convex_polygon中的id
+            double nowK = INT_MAX;//下一个边界点,在convex_polygon中的id
             point next_point{};
             next_point = convex_polygon[now];
             bool flag{true};
