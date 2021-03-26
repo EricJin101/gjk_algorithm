@@ -1,4 +1,5 @@
-# gjk_algorithm
+# gjk_algorithm learning
+- 2D algorithm
 
 ## Introduction
 - GJK 简写为 Gilbert–Johnson–Keerthi

@@ -200,9 +200,6 @@ namespace eric{
             point_in_triangle(0,0,p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
             direction.x = 1;
             direction.y = 2;
-            // direction1 , p1 p2
-            // find a vector direction
-            // direction2 , p3, p4
         }
 
         void collisionDetection(Polygon& poly1, Polygon& poly2, string method_select)
