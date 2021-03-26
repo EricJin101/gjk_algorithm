@@ -158,16 +158,27 @@ namespace eric{
             }
             if (half_line_method(convex_edge)) {cout << "in side" << endl;}
         }
-        void support(Polygon direction)
+        void getFarthestPointInDirection(point direction, point pos_far, point neg_far)
         {
-            //
-            point p1{}, p2{}, p3{}, p4{};//分别为d方向最大最小，垂直方向最大最小
+            /**
+             * direction 为向量方向
+             * pos_far正方向上最远端
+             * neg_far反方向上最远端*/
+             for (int i{0}; i < minkowski_diff.size(); ++i)
+             {
+                 //
+             }
+
         }
         bool gjk_method(Polygon& poly1, Polygon& poly2)
         {
-            //
+
+            point p1{}, p2{}, p3{}, p4{}, direction{};//分别为d方向最大最小，垂直方向最大最小
+            direction.x = 1;
+            direction.y = 2;
+            // direction1 , p1 p2
             // find a vector direction
-            //
+            // direction2 , p3, p4
         }
 
         void collisionDetection(Polygon& poly1, Polygon& poly2, string method_select)
@@ -180,6 +191,9 @@ namespace eric{
             }else if (method_select == "triangle")
             {
                 bool triangle_result = triangle_method();
+            }else if (method_select == "gjk")
+            {
+                gjk_method(poly1, poly2);
             }
         }
 
