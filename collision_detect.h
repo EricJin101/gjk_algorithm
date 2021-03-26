@@ -25,7 +25,7 @@ namespace eric{
         string collision_method;
 
         bool point_in_vector(Polygon polygon, point& p1)
-        {// 判断点在不在多边形中（vector）
+        {// 判断点在不在多边形顶点中（vector）
             for (int i{0}; i < polygon.size(); ++i)
             {
                 if (polygon[i].x == p1.x && polygon[i].y == p1.y)

@@ -115,8 +115,8 @@ namespace eric{
                     continue;//在两个点上面
                 double x = (double)(0 - p1.y) * (double)(p2.x - p1.x) / (double)(p2.y - p1.y) + p1.x;// 求交点的x坐标
                 if (x > 0)
-                {// 只统计p1p2与p向右射线的交点
-                    nCross++;
+                {
+                    nCross++;// 只统计p1p2与p向右射线的交点
                 }
             }
             return (nCross % 2 == 1);//交点为偶数，点在多边形之外
@@ -158,11 +158,15 @@ namespace eric{
             }
             if (half_line_method(convex_edge)) {cout << "in side" << endl;}
         }
+        void support()
+        {
 
+        }
         bool gjk_method(Polygon& poly1, Polygon& poly2)
         {
             //
             // find a vector direction
+            //
         }
 
         void collisionDetection(Polygon& poly1, Polygon& poly2, string method_select)
@@ -176,8 +180,6 @@ namespace eric{
             {
                 bool triangle_result = triangle_method();
             }
-
-//            return result;
         }
 
     }
