@@ -158,22 +158,32 @@ namespace eric{
             }
             if (half_line_method(convex_edge)) {cout << "in side" << endl;}
         }
-        void getFarthestPointInDirection(point direction, point pos_far, point neg_far)
+        void getFarthestPointInDirection(point direction, point &pos_far, point &neg_far)
         {
             /**
              * direction 为向量方向
              * pos_far正方向上最远端
              * neg_far反方向上最远端*/
+             double delta_x = INT_MIN;
+             int idx_min {0};
+             int idx_max {0};
              for (int i{0}; i < minkowski_diff.size(); ++i)
              {
-                 //
+                 if (minkowski_diff[i].x > delta_x)
+                 {
+                     idx_min = i;
+                 }
              }
-
         }
         bool gjk_method(Polygon& poly1, Polygon& poly2)
         {
-
+            //从minkowski中选，然后最大方向的两个点，垂直方向再选两个最大点
+            point vector_d{};
             point p1{}, p2{}, p3{}, p4{}, direction{};//分别为d方向最大最小，垂直方向最大最小
+            vector_d.x = 1;
+            vector_d.y = 0;
+            getFarthestPointInDirection(vector_d, p1, p2);
+
             direction.x = 1;
             direction.y = 2;
             // direction1 , p1 p2
