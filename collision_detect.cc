@@ -158,9 +158,10 @@ namespace eric{
             }
             if (half_line_method(convex_edge)) {cout << "in side" << endl;}
         }
-        void support()
+        void support(Polygon direction)
         {
-
+            //
+            point p1{}, p2{}, p3{}, p4{};//分别为d方向最大最小，垂直方向最大最小
         }
         bool gjk_method(Polygon& poly1, Polygon& poly2)
         {
