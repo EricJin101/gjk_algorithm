@@ -30,7 +30,7 @@ int main() {
 //    eric::collision_detect::collision_detect(collision::polygon1, collision::polygon2);
     eric::collision_detect::collisionDetection(eric::collision_detect::polygon1,
                                                eric::collision_detect::polygon2,
-                                               "triangle");
+                                               "gjk");
 
     return 0;
 }
