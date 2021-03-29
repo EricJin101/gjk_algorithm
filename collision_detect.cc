@@ -167,7 +167,9 @@ namespace eric{
              int idx_max {0};
              for (int i{0}; i < minkowski_diff.size(); ++i)
              {
-                 if (minkowski_diff[i].x > x_min)
+                 double dot_product = minkowski_diff[i].x * direction.x
+                                        + minkowski_diff[i].y * direction.y;
+                 if (dot_product > x_min)
                  {
                      idx_max = i;
                  }
@@ -177,29 +179,44 @@ namespace eric{
         }
         void CrossProduct()
         {}
-        bool containePoint()
-        {
-
-        }
         point support(point direction)
         {
-            point pt1{}, pt2{};
-            getFarthestPointInDirection(direction, pt1);
-            getFarthestPointInDirection(direction, pt2);
+            point pt{};
+            getFarthestPointInDirection(direction, pt);
+            return pt;
+        }
+        bool containedOrigin()
+        {
+            point A = Simplex.back();
         }
         bool gjk_method(Polygon& poly1, Polygon& poly2)
         {
             //从minkowski中选，然后最大方向的两个点，垂直方向再选两个最大点
             point vector_d{};
-            point p1{}, p2{}, p3{}, p4{}, direction{};//分别为d方向最大最小，垂直方向最大最小
             vector_d.x = 1;
             vector_d.y = 0;
-            getFarthestPointInDirection(vector_d, p1);
-            point_in_triangle(0,0,p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
-            direction.x = 1;
-            direction.y = 2;
+            Simplex.push_back(support(vector_d));
+            while (true)
+            {
+                Simplex.push_back(support(vector_d));
+                if (Simplex.back().x * vector_d.x + Simplex.back().y * vector_d.y < 0.0)
+                {
+                    return false;
+                }else
+                {
+                    if (containedOrigin())
+                    {
+                        return true;
+                    }
+                }
+            }
         }
-
+        point crossProduct()
+        {
+            /**(AC x AB) x AB = AB .x (AB .x AC) - AC .x (AB .x AB)
+             * 在C点对侧的AB的垂向量， .x表示点乘； x代表叉乘
+             * 返回向量叉积*/
+        }
         void collisionDetection(Polygon& poly1, Polygon& poly2, string method_select)
         {
             polygon_minus(poly1, poly2);

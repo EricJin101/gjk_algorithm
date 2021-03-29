@@ -21,9 +21,14 @@ namespace eric{
         Polygon polygon1;
         Polygon polygon2;
         Polygon minkowski_diff;
+        Polygon Simplex;
         bool collision_occurs{false};
         string collision_method;
-
+        void negative_vector(point& pt)
+        {
+            pt.x = - pt.x;
+            pt.y = - pt.y;
+        }
         bool point_in_vector(Polygon polygon, point& p1)
         {// 判断点在不在多边形顶点中（vector）
             for (int i{0}; i < polygon.size(); ++i)
