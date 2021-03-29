@@ -121,27 +121,6 @@ namespace eric{
             }
             return (nCross % 2 == 1);//交点为偶数，点在多边形之外
         }
-        bool half_line_method(Polygon& convex_edge)
-        {//原点位0,0
-            int nCross = 0;
-            for (int i{0}; i < convex_edge.size(); i++)
-            {//找没一个坐标点
-                Point p1 = convex_edge[i];
-                Point p2 = convex_edge[(i + 1) % nCount];// 最后一个点与第一个点连线
-                if (p1.y == p2.y)
-                    continue;
-                if (p.y < min<double>(p1.y, p2.y))
-                    continue;
-                if (p.y >= max<double>(p1.y, p2.y))
-                    continue;
-                double x = (double)(p.y - p1.y) * (double)(p2.x - p1.x) / (double)(p2.y - p1.y) + p1.x;// 求交点的x坐标
-                if (x > p.x)
-                {// 正方向点,如果在右边
-                    nCross++;
-                }
-            }
-            return (nCross % 2 == 1);// 交点为偶数，点在多边形之外
-        }
         bool convex_method(Polygon& poly1, Polygon& poly2)
         {
             polygon_minus(poly1, poly2);
@@ -179,36 +158,22 @@ namespace eric{
             }
             if (half_line_method(convex_edge)) {cout << "in side" << endl;}
         }
-        void getFarthestPointInDirection(point direction, point &pos_far, point &neg_far, point &up_far)
+        void getFarthestPointInDirection(point direction, point &pt)
         {
             /**
              * direction 为向量方向
-             * pos_far正方向上最远端
-             * neg_far反方向上最远端*/
+             * pt正方向上最远端*/
              double x_min = INT_MIN;
-             double x_max = INT_MAX;
-             double y_max = INT_MAX;
-             int idx_min {0};
              int idx_max {0};
-             int idx_y_max {0};
              for (int i{0}; i < minkowski_diff.size(); ++i)
              {
                  if (minkowski_diff[i].x > x_min)
                  {
                      idx_max = i;
                  }
-                 if (minkowski_diff[i].x < x_max)
-                 {
-                     idx_min = i;
-                 }
-                 if (minkowski_diff[i].y < y_max)
-                 {
-                     idx_y_max = i;
-                 }
              }
-             pos_far = minkowski_diff[idx_max];
-             neg_far = minkowski_diff[idx_min];
-             up_far = minkowski_diff[idx_y_max];
+             pt.x = minkowski_diff[idx_max].x;
+             pt.y = minkowski_diff[idx_max].y;
         }
         void CrossProduct()
         {}
@@ -216,9 +181,11 @@ namespace eric{
         {
 
         }
-        point support()
+        point support(point direction)
         {
-
+            point pt1{}, pt2{};
+            getFarthestPointInDirection(direction, pt1);
+            getFarthestPointInDirection(direction, pt2);
         }
         bool gjk_method(Polygon& poly1, Polygon& poly2)
         {
@@ -227,7 +194,7 @@ namespace eric{
             point p1{}, p2{}, p3{}, p4{}, direction{};//分别为d方向最大最小，垂直方向最大最小
             vector_d.x = 1;
             vector_d.y = 0;
-            getFarthestPointInDirection(vector_d, p1, p2, p3);
+            getFarthestPointInDirection(vector_d, p1);
             point_in_triangle(0,0,p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
             direction.x = 1;
             direction.y = 2;
