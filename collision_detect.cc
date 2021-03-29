@@ -177,8 +177,10 @@ namespace eric{
              pt.x = minkowski_diff[idx_max].x;
              pt.y = minkowski_diff[idx_max].y;
         }
-        void CrossProduct()
-        {}
+        void CrossProduct(point& p1, point& p2, point& p2)
+        {// 右手定则
+
+        }
         point support(point direction)
         {
             point pt{};
@@ -186,7 +188,7 @@ namespace eric{
             return pt;
         }
         bool containedOrigin()
-        {
+        {//判断是否包含原点
             point A = Simplex.back();
         }
         bool gjk_method(Polygon& poly1, Polygon& poly2)
