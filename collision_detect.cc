@@ -210,10 +210,16 @@ namespace eric{
              neg_far = minkowski_diff[idx_min];
              up_far = minkowski_diff[idx_y_max];
         }
+        void CrossProduct()
+        {}
         bool containePoint()
-        {}
+        {
+
+        }
         point support()
-        {}
+        {
+
+        }
         bool gjk_method(Polygon& poly1, Polygon& poly2)
         {
             //从minkowski中选，然后最大方向的两个点，垂直方向再选两个最大点
