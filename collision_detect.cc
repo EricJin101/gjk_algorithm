@@ -187,9 +187,53 @@ namespace eric{
             getFarthestPointInDirection(direction, pt);
             return pt;
         }
+        point crossProduct(point vector1, point vector2, point vector3)
+        {
+            /**(AC x AB) x AB = AB .x (AB .x AC) - AC .x (AB .x AB)
+             * 在C点对侧的AB的垂向量， .x表示点乘； x代表叉乘
+             * 返回向量叉积*/
+            return {(vector3.x * vector1.x + vector3.y * vector1.y) * vector2.x - (vector3.x * vector2.x + vector3.y * vector2.y) * vector1.x,
+                    (vector3.x * vector1.x + vector3.y * vector1.y) * vector2.y - (vector3.x * vector2.x + vector3.y * vector2.y) * vector1.y};
+        }
         bool containedOrigin()
         {//判断是否包含原点
-            point A = Simplex.back();
+            if (Simplex.empty())
+            {
+                return false;
+            }
+            point a = Simplex.back();
+            if (Simplex.size() == 3)
+            {
+                point b = Simplex.at(1);
+                point c = Simplex.at(0);
+                point ab = vector_minus(b, a);
+                point ac = vector_minus(c, a);
+                point abPrep = crossProduct(ac, ab, ab);
+                point acPrep = crossProduct(ab, ac, ac);
+                if ((abPrep.x * (-a.x) + abPrep.y * (-a.y)) > 0.0)
+                {
+                    Simplex.erase(Simplex.begin());
+                    return false;
+                }else
+                {
+                    if ((acPrep.x * (-a.x) + acPrep.y * (-a.y)) > 0.0)
+                    {
+                        Simplex.erase(Simplex.begin() + 1);
+                        return false;
+                    }else
+                    {
+                        return true;
+                    }
+                }
+            }else
+            {
+                point b = Simplex.front();
+                point ab = vector_minus(b, a);
+                point abPrep = crossProduct(ab, negative_vector(a), ab);
+                // direction
+                return false;
+
+            }
         }
         bool gjk_method(Polygon& poly1, Polygon& poly2)
         {
@@ -212,12 +256,6 @@ namespace eric{
                     }
                 }
             }
-        }
-        point crossProduct()
-        {
-            /**(AC x AB) x AB = AB .x (AB .x AC) - AC .x (AB .x AB)
-             * 在C点对侧的AB的垂向量， .x表示点乘； x代表叉乘
-             * 返回向量叉积*/
         }
         void collisionDetection(Polygon& poly1, Polygon& poly2, string method_select)
         {

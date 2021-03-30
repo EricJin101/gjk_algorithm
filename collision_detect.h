@@ -24,10 +24,15 @@ namespace eric{
         Polygon Simplex;
         bool collision_occurs{false};
         string collision_method;
-        void negative_vector(point& pt)
+        point negative_vector(point& pt)
         {
             pt.x = - pt.x;
             pt.y = - pt.y;
+            return pt;
+        }
+        point vector_minus(point pt1, point pt2)
+        {// pt1 - pt2
+            return {pt1.x - pt2.x, pt1.y - pt2.y};
         }
         bool point_in_vector(Polygon polygon, point& p1)
         {// 判断点在不在多边形顶点中（vector）
