@@ -171,15 +171,12 @@ namespace eric{
                                         + minkowski_diff[i].y * direction.y;
                  if (dot_product > x_min)
                  {
+                     x_min = dot_product;
                      idx_max = i;
                  }
              }
              pt.x = minkowski_diff[idx_max].x;
              pt.y = minkowski_diff[idx_max].y;
-        }
-        void CrossProduct(point& p1, point& p2, point& p2)
-        {// 右手定则
-
         }
         point support(point direction)
         {
@@ -238,7 +235,6 @@ namespace eric{
                 direction.x = abPrep.x;
                 direction.y = abPrep.y;
                 return false;
-
             }
         }
         bool gjk_method(Polygon& poly1, Polygon& poly2)
@@ -247,6 +243,7 @@ namespace eric{
             direction.x = 1;
             direction.y = 0;
             Simplex.push_back(support(direction));//添加一个点
+            negative_vector(direction);
             while (true)
             {
                 Simplex.push_back(support(direction));
@@ -257,6 +254,7 @@ namespace eric{
                 {
                     if (containedOrigin())
                     {
+                        cout << "in side." << endl;
                         return true;
                     }
                 }
