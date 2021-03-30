@@ -22,6 +22,7 @@ namespace eric{
         Polygon polygon2;
         Polygon minkowski_diff;
         Polygon Simplex;
+        point direction{};
         bool collision_occurs{false};
         string collision_method;
         point negative_vector(point& pt)

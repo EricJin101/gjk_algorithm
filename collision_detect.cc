@@ -213,12 +213,16 @@ namespace eric{
                 if ((abPrep.x * (-a.x) + abPrep.y * (-a.y)) > 0.0)
                 {
                     Simplex.erase(Simplex.begin());
+                    direction.x = abPrep.x;
+                    direction.y = abPrep.y;
                     return false;
                 }else
                 {
                     if ((acPrep.x * (-a.x) + acPrep.y * (-a.y)) > 0.0)
                     {
                         Simplex.erase(Simplex.begin() + 1);
+                        direction.x = acPrep.x;
+                        direction.y = acPrep.y;
                         return false;
                     }else
                     {
@@ -230,7 +234,9 @@ namespace eric{
                 point b = Simplex.front();
                 point ab = vector_minus(b, a);
                 point abPrep = crossProduct(ab, negative_vector(a), ab);
-                // direction
+                // 更新direction
+                direction.x = abPrep.x;
+                direction.y = abPrep.y;
                 return false;
 
             }
@@ -238,14 +244,13 @@ namespace eric{
         bool gjk_method(Polygon& poly1, Polygon& poly2)
         {
             //从minkowski中选，然后最大方向的两个点，垂直方向再选两个最大点
-            point vector_d{};
-            vector_d.x = 1;
-            vector_d.y = 0;
-            Simplex.push_back(support(vector_d));
+            direction.x = 1;
+            direction.y = 0;
+            Simplex.push_back(support(direction));//添加一个点
             while (true)
             {
-                Simplex.push_back(support(vector_d));
-                if (Simplex.back().x * vector_d.x + Simplex.back().y * vector_d.y < 0.0)
+                Simplex.push_back(support(direction));
+                if (Simplex.back().x * direction.x + Simplex.back().y * direction.y < 0.0)
                 {
                     return false;
                 }else
