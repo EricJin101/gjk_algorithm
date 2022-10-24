@@ -1,4 +1,4 @@
-#include "collision_detect.cc"
+#include "gjk.cc"
 
 int main() {
     cout << "多边形已经输入完成。" << endl;

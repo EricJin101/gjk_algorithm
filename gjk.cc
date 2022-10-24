@@ -1,4 +1,4 @@
-#include "collision_detect.h"
+#include "gjk.h"
 namespace eric {
 namespace collision_detect {
 void method_define(string& method) { collision_method = method; }
