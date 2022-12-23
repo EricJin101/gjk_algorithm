@@ -1,11 +1,14 @@
-#ifndef GJK_COLLISION_DETECT_H
-#define GJK_COLLISION_DETECT_H
+#ifndef GJK_COLLISION_DETECT_H_
+#define GJK_COLLISION_DETECT_H_
+
+#include <memory>
 
 #include <limits.h>
 #include <algorithm>
 #include "cmath"
 #include "iostream"
 #include "vector"
+#include "data_struct.cc"
 using namespace std;
 namespace eric {
 namespace collision_detect {
@@ -52,6 +55,37 @@ void polygon_minus(Polygon& poly1, Polygon& poly2) {  // polygon minus
   }
 }
 
+
+class GJK {
+ public:
+  GJK(){};
+  bool Init(const std::vector<Point>& poly1, const std::vector<Point>& poly2);
+  /**
+   * @breif: 给两定多边形, 判断是否相交
+   * */
+  bool Check();
+
+ private:
+  /**
+   * @breif: 求mincov diff
+   * */
+  void GetMincovDiff();
+  Point GetFarthestinDirection();
+  bool OriginContained();
+
+  Point CrossProduct(const Point& v1, const Point& v2, const Point& v3);
+
+ private:
+  std::vector<Point> polygon1_;
+  std::vector<Point> polygon2_;
+  std::vector<Point> simplex_;
+
+  Point direction_{1, 0};
+
+  std::vector<Point> minkowski_diff_;  // 敏可夫差
+};
+
 }  // namespace collision_detect
 }  // namespace eric
-#endif  // GJK_COLLISION_DETECT_H
+
+#endif  // GJK_COLLISION_DETECT_H_

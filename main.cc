@@ -13,6 +13,9 @@ int main() {
     temp.x = 4;
     temp.y = 5;
     eric::collision_detect::polygon1.push_back(temp);
+    temp.x = 11;
+    temp.y = 11;
+    eric::collision_detect::polygon1.push_back(temp);
 
     temp.x = 5;
     temp.y = 7;

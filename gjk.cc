@@ -1,4 +1,5 @@
 #include "gjk.h"
+
 namespace eric {
 namespace collision_detect {
 void method_define(string& method) { collision_method = method; }
@@ -221,9 +222,10 @@ bool gjk_method(Polygon& poly1, Polygon& poly2) {
     }
   }
 }
+
 void collisionDetection(Polygon& poly1, Polygon& poly2, string method_select) {
   polygon_minus(poly1, poly2);
-  cout << method_select << endl;
+  cout << "using " << method_select << endl;
   if (method_select == "convex") {
     convex_method(poly1, poly2);
   } else if (method_select == "triangle") {
@@ -231,6 +233,143 @@ void collisionDetection(Polygon& poly1, Polygon& poly2, string method_select) {
   } else if (method_select == "gjk") {
     gjk_method(poly1, poly2);
   }
+  std::unique_ptr<GJK> gjk_ = nullptr;
+  gjk_ = std::make_unique<GJK>();
+  Point tpt;
+  std::vector<Point> po1, po2;
+  for (auto p : poly1) {
+    tpt.set_x(p.x);
+    tpt.set_y(p.y);
+    po1.emplace_back(tpt);
+  }
+  for (auto p : poly2) {
+    tpt.set_x(p.x);
+    tpt.set_y(p.y);
+    po2.emplace_back(tpt);
+  }
+  gjk_->Init(po1, po2);
+  gjk_->Check();
+}
+
+bool GJK::Init(const std::vector<Point>& poly1,
+               const std::vector<Point>& poly2) {
+  // 不是多边形
+  if (poly1.size() < 3 && poly2.size() < 3) {
+    return false;
+  }
+  polygon1_ = poly1;
+  polygon2_ = poly2;
+  // TODO: 在一条直线
+  return true;
+}
+
+void GJK::GetMincovDiff() {
+  auto inMincov = [](std::vector<Point>& poly, Point pt) -> bool {
+    for (auto pp : poly) {
+      if (pp == pt) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  cout << "         ^*         " << endl;
+  cout << "        { }         " << endl;
+  cout << "       {°  }        " << endl;
+  cout << "      {    :}       " << endl;
+  cout << "        | |         " << endl;
+  cout << "  merry christmas!  " << endl;
+
+  for (const auto& p1 : polygon1_) {
+    for (const auto& p2 : polygon2_) {
+      Point tp{p1.x() - p2.x(), p1.y() - p2.y()};  // 顶点分别求差
+      if (!inMincov(minkowski_diff_, tp)) {
+        minkowski_diff_.emplace_back(tp);
+      }
+    }
+  }
+}
+
+bool GJK::Check() {
+  GetMincovDiff();
+  simplex_.emplace_back(GetFarthestinDirection());
+  direction_ = direction_.Negate();
+  while (true) {
+    simplex_.emplace_back(GetFarthestinDirection());
+    if (simplex_.back().x() * direction_.x() +
+            simplex_.back().y() * direction_.y() <
+        0.0) {
+      return false;
+    } else {
+      if (containedOrigin()) {
+        cout << "wow in side." << endl;
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+Point GJK::GetFarthestinDirection() {
+  double x_min = -1.0;
+  Point far_pt;
+  for (const auto& pt : minkowski_diff_) {
+    double inner_pro = pt.InnerProd(pt);
+    if (inner_pro > x_min) {
+      x_min = inner_pro;
+      far_pt = pt;
+    }
+  }
+  return far_pt;
+}
+
+bool GJK::OriginContained() {
+  if (simplex_.empty()) {
+    return false;
+  }
+  Point aa = simplex_.back();
+  if (3 == simplex_.size()) {
+    Point b = simplex_.at(1);
+    Point c = simplex_.at(0);
+    Point ab = b - aa;
+    Point ac = c - aa;
+    Point abPrep = CrossProduct(ac, ab, ab);
+    Point acPrep = CrossProduct(ab, ac, ac);
+    if ((abPrep.x() * (-aa.x()) + abPrep.y() * (-aa.y())) > 0.0) {
+      simplex_.erase(simplex_.begin());
+      direction_.set_x(abPrep.x());
+      direction_.set_y(abPrep.y());
+      return false;
+    } else {
+      if ((acPrep.x() * (-aa.x()) + acPrep.y() * (-aa.y())) > 0.0) {
+        simplex_.erase(simplex_.begin() + 1);
+        direction_.set_x(acPrep.x());
+        direction_.set_y(acPrep.y());
+        return false;
+      } else {
+        return true;
+      }
+    }
+  } else {
+    Point b = simplex_.front();
+    Point ab = b - aa;
+    Point abPrep = CrossProduct(ab, aa.Negate(), ab);
+    // 更新direction
+    direction_.set_x(abPrep.x());
+    direction_.set_y(abPrep.y());
+    return false;
+  }
+}
+
+Point GJK::CrossProduct(const Point& v1, const Point& v2, const Point& v3) {
+  /**(AC x AB) x AB = AB .x (AB .x AC) - AC .x (AB .x AB)
+   * 在C点对侧的AB的垂向量， .x表示点乘； x代表叉乘
+   * 返回向量叉积*/
+  return {(v3.x() * v1.x() + v3.y() * v1.y()) * v2.x() -
+              (v3.x() * v2.x() + v3.y() * v2.y()) * v1.x(),
+          (v3.x() * v1.x() + v3.y() * v1.y()) * v2.y() -
+              (v3.x() * v2.x() + v3.y() * v2.y()) * v1.y()};
 }
 
 }  // namespace collision_detect
