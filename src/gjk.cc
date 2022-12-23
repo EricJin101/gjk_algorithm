@@ -259,7 +259,7 @@ bool GJK::Init(const std::vector<Point>& poly1,
   }
   polygon1_ = poly1;
   polygon2_ = poly2;
-  // TODO: 在一条直线
+  // TODO: 在一条直线?
   return true;
 }
 

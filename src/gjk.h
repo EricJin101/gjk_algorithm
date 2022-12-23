@@ -6,9 +6,9 @@
 #include <limits.h>
 #include <algorithm>
 #include "cmath"
+#include "data_struct.cc"
 #include "iostream"
 #include "vector"
-#include "data_struct.cc"
 using namespace std;
 namespace eric {
 namespace collision_detect {
@@ -55,6 +55,10 @@ void polygon_minus(Polygon& poly1, Polygon& poly2) {  // polygon minus
   }
 }
 
+class TestifyTriangle {
+ public:
+ private:
+};
 
 class GJK {
  public:
