@@ -356,16 +356,12 @@ bool GJK::OriginContained() {
     Point ab = b - aa;
     Point abPrep = CrossProduct(ab, aa.Negate(), ab);
     // 更新direction
-    direction_.set_x(abPrep.x());
-    direction_.set_y(abPrep.y());
+    direction_ = abPrep;
     return false;
   }
 }
 
 Point GJK::CrossProduct(const Point& v1, const Point& v2, const Point& v3) {
-  /**(AC x AB) x AB = AB .x (AB .x AC) - AC .x (AB .x AB)
-   * 在C点对侧的AB的垂向量， .x表示点乘； x代表叉乘
-   * 返回向量叉积*/
   return {(v3.x() * v1.x() + v3.y() * v1.y()) * v2.x() -
               (v3.x() * v2.x() + v3.y() * v2.y()) * v1.x(),
           (v3.x() * v1.x() + v3.y() * v1.y()) * v2.y() -

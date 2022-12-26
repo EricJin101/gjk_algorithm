@@ -75,8 +75,15 @@ class GJK {
    * */
   void GetMincovDiff();
   Point GetFarthestinDirection();
+
+  /**
+   * @breif: 判断是否包含原点
+   * */
   bool OriginContained();
 
+  /**(AC x AB) x AB = AB .x (AB .x AC) - AC .x (AB .x AB)
+   * 在C点对侧的AB的垂向量， .x表示点乘； x代表叉乘
+   * 返回向量叉积*/
   Point CrossProduct(const Point& v1, const Point& v2, const Point& v3);
 
  private:
@@ -86,7 +93,7 @@ class GJK {
 
   Point direction_{1, 0};
 
-  std::vector<Point> minkowski_diff_;  // 敏可夫差
+  std::vector<Point> minkowski_diff_;  // 闵可夫斯基差
 };
 
 }  // namespace collision_detect
