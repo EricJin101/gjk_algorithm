@@ -297,12 +297,11 @@ bool GJK::Check() {
   direction_ = direction_.Negate();
   while (true) {
     simplex_.emplace_back(GetFarthestinDirection());
-    if (simplex_.back().x() * direction_.x() +
-            simplex_.back().y() * direction_.y() <
-        0.0) {
+    if (simplex_.back().InnerProd(direction_) < 0.0) {
+      cout << " < 0.0" << endl;
       return false;
     } else {
-      if (containedOrigin()) {
+      if (OriginContained()) {
         cout << "wow in side." << endl;
         return true;
       }
@@ -313,7 +312,7 @@ bool GJK::Check() {
 }
 
 Point GJK::GetFarthestinDirection() {
-  double x_min = -1.0;
+  double x_min = -std::numeric_limits<double>::max();
   Point far_pt;
   for (const auto& pt : minkowski_diff_) {
     double inner_pro = pt.InnerProd(direction_);
@@ -329,34 +328,33 @@ bool GJK::OriginContained() {
   if (simplex_.empty()) {
     return false;
   }
-  Point aa = simplex_.back();
+  Point a = simplex_.back();
   if (3 == simplex_.size()) {
     Point b = simplex_.at(1);
     Point c = simplex_.at(0);
-    Point ab = b - aa;
-    Point ac = c - aa;
+    Point ab = b - a;
+    Point ac = c - a;
     Point abPrep = CrossProduct(ac, ab, ab);
     Point acPrep = CrossProduct(ab, ac, ac);
-    if ((abPrep.x() * (-aa.x()) + abPrep.y() * (-aa.y())) > 0.0) {
+    if ((abPrep.x() * (-a.x()) + abPrep.y() * (-a.y())) > 0.0) {
       simplex_.erase(simplex_.begin());
       direction_.set_x(abPrep.x());
       direction_.set_y(abPrep.y());
       return false;
     } else {
-      if ((acPrep.x() * (-aa.x()) + acPrep.y() * (-aa.y())) > 0.0) {
+      if ((acPrep.x() * (-a.x()) + acPrep.y() * (-a.y())) > 0.0) {
         simplex_.erase(simplex_.begin() + 1);
         direction_.set_x(acPrep.x());
         direction_.set_y(acPrep.y());
         return false;
-      } else {
-        return true;
       }
+      return true;
     }
   } else {
+    // 单纯形只有两个点时, 更新direction
     Point b = simplex_.front();
-    Point ab = b - aa;
-    Point abPrep = CrossProduct(ab, aa.Negate(), ab);
-    // 更新direction
+    Point ab = b - a;
+    Point abPrep = CrossProduct(ab, a.Negate(), ab);
     direction_ = abPrep;
     return false;
   }

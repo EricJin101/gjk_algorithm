@@ -78,6 +78,11 @@ class GJK {
    * */
   void GetMinkowskiDiff();
 
+  /**
+   * @breif: 从闵可夫斯基差中选择最远点
+   * (从Shape1的direction方向, 和Shape2的 - direction方向)
+   *
+   * */
   Point GetFarthestinDirection();
 
   /**
