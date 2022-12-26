@@ -165,6 +165,9 @@ void TestifyHalfLine::GetMinkowskiDiff() {
 bool TestifyHalfLine::Check() {
   GetMinkowskiDiff();
   std::vector<Point> convex_polygon = minkowski_diff_;
+  for (auto p : convex_polygon) {
+    cout << p.x() << ", " << p.y() << endl;
+  }
   sort(convex_polygon.begin(), convex_polygon.end(),
        [](const Point& p1, const Point& p2) { return p1.y() > p2.y(); });
   //坐标系按照y从大到小排列、algorithm
@@ -173,25 +176,23 @@ bool TestifyHalfLine::Check() {
   //左到右
   std::vector<Point> convex_edge;
   int now = 0;  //在所有顶点中的位置
-  double nowK = std::numeric_limits<double>::max();  //下一个边界点,在convex_polygon中的id
+  double nowK = std::numeric_limits<double>::max();
+  //下一个边界点,在convex_polygon中的id
   Point next_point;
   next_point = convex_polygon[now];
   bool flag{true};
   now = FindNextEdge(convex_polygon, now, nowK, convex_edge, flag);
-  convex_polygon.emplace_back(next_point);
+  convex_edge.emplace_back(next_point);
   while (0 != now) {
     if (now == convex_polygon.size() - 1) {
       flag = false;
       nowK = INT_MAX;
     }
-    convex_edge.push_back(convex_polygon[now]);
+    convex_edge.emplace_back(convex_polygon[now]);
     now = FindNextEdge(convex_polygon, now, nowK, convex_edge, flag);
   }
-  for (int jj{0}; jj < convex_edge.size(); ++jj) {
-    cout << convex_edge[jj].x() << "," << convex_edge[jj].y() << endl;
-  }
   if (HalfLineMethod(convex_edge)) {
-    cout << "in side" << endl;
+    cout << "halfline in side" << endl;
     return true;
   }
 
