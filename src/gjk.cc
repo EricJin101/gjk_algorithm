@@ -213,6 +213,7 @@ bool gjk_method(Polygon& poly1, Polygon& poly2) {
   while (true) {
     Simplex.push_back(support(direction));
     if (Simplex.back().x * direction.x + Simplex.back().y * direction.y < 0.0) {
+      cout << "not" << endl;
       return false;
     } else {
       if (containedOrigin()) {
@@ -235,6 +236,9 @@ void collisionDetection(Polygon& poly1, Polygon& poly2, string method_select) {
   }
   std::unique_ptr<GJK> gjk_ = nullptr;
   gjk_ = std::make_unique<GJK>();
+  std::unique_ptr<TestifyTriangle> test_triangle_;
+  test_triangle_ = std::make_unique<TestifyTriangle>();
+
   Point tpt;
   std::vector<Point> po1, po2;
   for (auto p : poly1) {
@@ -248,7 +252,78 @@ void collisionDetection(Polygon& poly1, Polygon& poly2, string method_select) {
     po2.emplace_back(tpt);
   }
   gjk_->Init(po1, po2);
-  gjk_->Check();
+  // gjk_->Check();
+  test_triangle_->Init(po1, po2);
+  test_triangle_->Check();
+}
+
+bool TestifyTriangle::Init(const std::vector<Point>& poly1,
+                           const std::vector<Point>& poly2) {
+  // 不是多边形
+  if (poly1.size() < 3 && poly2.size() < 3) {
+    return false;
+  }
+  polygon1_ = poly1;
+  polygon2_ = poly2;
+  // TODO: 在一条直线?
+  return true;
+}
+
+bool TestifyTriangle::Check() {
+  GetMinkowskiDiff();
+  for (int i{0}; i < minkowski_diff_.size(); ++i) {
+    for (int j{0}; j < minkowski_diff_.size(); ++j) {
+      for (int k{0}; k < minkowski_diff_.size(); ++k) {
+        if (i == j || i == k || j == k) {
+          continue;
+        }
+        bool in_side(false);
+        in_side = PointInTriangle(
+            0, 0, minkowski_diff_[i].x(), minkowski_diff_[i].y(),
+            minkowski_diff_[j].x(), minkowski_diff_[j].y(),
+            minkowski_diff_[k].x(), minkowski_diff_[k].y());
+        if (in_side) {
+          cout << "test triangle in side.\n" << endl;
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+void TestifyTriangle::GetMinkowskiDiff() {
+  auto inMinkowski = [](std::vector<Point>& poly, Point pt) -> bool {
+    for (auto pp : poly) {
+      if (pp == pt) {
+        return true;
+      }
+    }
+    return false;
+  };
+  for (const auto& p1 : polygon1_) {
+    for (const auto& p2 : polygon2_) {
+      Point tp{p1.x() - p2.x(), p1.y() - p2.y()};
+      if (!inMinkowski(minkowski_diff_, tp)) {
+        minkowski_diff_.emplace_back(tp);
+      }
+    }
+  }
+}
+
+double TestifyTriangle::IsTriangle(double x1, double y1, double x2, double y2,
+                                   double x3, double y3) {
+  return abs((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2.0);
+}
+
+bool TestifyTriangle::PointInTriangle(double x, double y, double x1, double y1,
+                                      double x2, double y2, double x3,
+                                      double y3) {
+  double ABC = IsTriangle(x1, y1, x2, y2, x3, y3);
+  double PBC = IsTriangle(x, y, x2, y2, x3, y3);
+  double PAC = IsTriangle(x1, y1, x, y, x3, y3);
+  double PAB = IsTriangle(x1, y1, x2, y2, x, y);
+  return (ABC == PBC + PAC + PAB);
 }
 
 bool GJK::Init(const std::vector<Point>& poly1,
@@ -298,7 +373,10 @@ bool GJK::Check() {
   while (true) {
     simplex_.emplace_back(GetFarthestinDirection());
     if (simplex_.back().InnerProd(direction_) < 0.0) {
-      cout << " < 0.0" << endl;
+      // 在direction的投影距离为负数
+      // simplex最后一个点是direction方向的最远点
+      // 最远点都在direction的"后面"
+      cout << "not inside" << endl;
       return false;
     } else {
       if (OriginContained()) {

@@ -19,7 +19,7 @@ int main() {
     temp.x = 1;
     temp.y = 3;
     eric::collision_detect::polygon2.push_back(temp);
-    temp.x = 3;
+    temp.x = 5;
     temp.y = 3;
     eric::collision_detect::polygon2.push_back(temp);
     temp.x = 1;

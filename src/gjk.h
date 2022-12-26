@@ -57,7 +57,37 @@ void polygon_minus(Polygon& poly1, Polygon& poly2) {  // polygon minus
 
 class TestifyTriangle {
  public:
+  TestifyTriangle(){};
+  bool Init(const std::vector<Point>& poly1, const std::vector<Point>& poly2);
+
+  /**
+   * 选择三条边，组成三条三角形，判断原点在不在其内
+   * */
+  bool Check();
+
  private:
+  void GetMinkowskiDiff();
+
+  /**
+   * @brief: 是否为三角形
+   * */
+  double IsTriangle(double x1, double x2, double x3, double y1, double y2,
+                    double y3);
+
+  /**
+   * 判断x,y 在不在由(x1,y1), (x2,y2), (x3,y3)组成的三角形内
+   * */
+  bool PointInTriangle(double x, double y, double x1, double y1, double x2,
+                       double y2, double x3, double y3);
+
+ private:
+  std::vector<Point> polygon1_;
+  std::vector<Point> polygon2_;
+  std::vector<Point> simplex_;
+
+  Point direction_{1, 0};  // 可以任意选一个方向
+
+  std::vector<Point> minkowski_diff_;  // 闵可夫斯基差
 };
 
 class GJK {
