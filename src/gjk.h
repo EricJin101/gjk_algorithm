@@ -55,6 +55,33 @@ void polygon_minus(Polygon& poly1, Polygon& poly2) {  // polygon minus
   }
 }
 
+class TestifyHalfLine {
+ public:
+  TestifyHalfLine(){};
+
+  bool Init(const std::vector<Point>& poly1, const std::vector<Point>& poly2);
+
+  /*
+   * @brief: 射线法
+   * */
+  bool Check();
+
+ private:
+  void GetMinkowskiDiff();
+
+  bool HalfLineMethod(std::vector<Point> convex_polygon);
+
+  size_t FindNextEdge(std::vector<Point> convex_polygon, size_t now,
+                      double nowK, std::vector<Point> convex_edge, bool flag);
+
+  double ComputeK(const Point& p1, const Point& p2);
+
+ private:
+  std::vector<Point> polygon1_;
+  std::vector<Point> polygon2_;
+  std::vector<Point> minkowski_diff_;  // 闵可夫斯基差
+};
+
 class TestifyTriangle {
  public:
   TestifyTriangle(){};

@@ -100,18 +100,15 @@ bool convex_method(Polygon& poly1, Polygon& poly2) {
 }
 
 void collisionDetection(Polygon& poly1, Polygon& poly2, string method_select) {
-  polygon_minus(poly1, poly2);
-  cout << "using " << method_select << endl;
-  if (method_select == "convex") {
-    convex_method(poly1, poly2);
-  } else if (method_select == "gjk") {
-
-  }
   std::unique_ptr<GJK> gjk_ = nullptr;
   gjk_ = std::make_unique<GJK>();
-  std::unique_ptr<TestifyTriangle> test_triangle_;
+
+  std::unique_ptr<TestifyTriangle> test_triangle_ = nullptr;
   test_triangle_ = std::make_unique<TestifyTriangle>();
 
+  std::unique_ptr<TestifyHalfLine> test_halfline_ = nullptr;
+  test_halfline_ = std::make_unique<TestifyHalfLine>();
+  cout << "using " << method_select << endl;
   Point tpt;
   std::vector<Point> po1, po2;
   for (auto p : poly1) {
@@ -124,10 +121,147 @@ void collisionDetection(Polygon& poly1, Polygon& poly2, string method_select) {
     tpt.set_y(p.y);
     po2.emplace_back(tpt);
   }
-  gjk_->Init(po1, po2);
-  // gjk_->Check();
-  test_triangle_->Init(po1, po2);
-  test_triangle_->Check();
+  if (method_select == "convex") {
+    test_halfline_->Init(po1, po2);
+    test_halfline_->Check();
+  } else if (method_select == "triangle") {
+    test_triangle_->Init(po1, po2);
+    test_triangle_->Check();
+  } else if (method_select == "gjk") {
+    gjk_->Init(po1, po2);
+    gjk_->Check();
+  }
+}
+
+bool TestifyHalfLine::Init(const std::vector<Point>& poly1,
+                           const std::vector<Point>& poly2) {
+  if (poly1.size() < 3 && poly2.size() < 3) {
+    return false;
+  }
+  polygon1_ = poly1;
+  polygon2_ = poly2;
+  return true;
+}
+
+void TestifyHalfLine::GetMinkowskiDiff() {
+  auto inMinkowski = [](std::vector<Point>& poly, Point pt) -> bool {
+    for (auto pp : poly) {
+      if (pp == pt) {
+        return true;
+      }
+    }
+    return false;
+  };
+  for (const auto& p1 : polygon1_) {
+    for (const auto& p2 : polygon2_) {
+      Point tp{p1.x() - p2.x(), p1.y() - p2.y()};
+      if (!inMinkowski(minkowski_diff_, tp)) {
+        minkowski_diff_.emplace_back(tp);
+      }
+    }
+  }
+}
+
+bool TestifyHalfLine::Check() {
+  GetMinkowskiDiff();
+  std::vector<Point> convex_polygon = minkowski_diff_;
+  sort(convex_polygon.begin(), convex_polygon.end(),
+       [](const Point& p1, const Point& p2) { return p1.y() > p2.y(); });
+  //坐标系按照y从大到小排列、algorithm
+  stable_sort(convex_polygon.begin(), convex_polygon.end(),
+              [](const Point& p1, const Point& p2) { return p1.x() < p2.x(); });
+  //左到右
+  std::vector<Point> convex_edge;
+  int now = 0;  //在所有顶点中的位置
+  double nowK = std::numeric_limits<double>::max();  //下一个边界点,在convex_polygon中的id
+  Point next_point;
+  next_point = convex_polygon[now];
+  bool flag{true};
+  now = FindNextEdge(convex_polygon, now, nowK, convex_edge, flag);
+  convex_polygon.emplace_back(next_point);
+  while (0 != now) {
+    if (now == convex_polygon.size() - 1) {
+      flag = false;
+      nowK = INT_MAX;
+    }
+    convex_edge.push_back(convex_polygon[now]);
+    now = FindNextEdge(convex_polygon, now, nowK, convex_edge, flag);
+  }
+  for (int jj{0}; jj < convex_edge.size(); ++jj) {
+    cout << convex_edge[jj].x() << "," << convex_edge[jj].y() << endl;
+  }
+  if (HalfLineMethod(convex_edge)) {
+    cout << "in side" << endl;
+    return true;
+  }
+
+  cout << "half_line_method out" << endl;
+  return false;
+}
+
+bool TestifyHalfLine::HalfLineMethod(std::vector<Point> convex_edge) {
+  int nCross = 0;  //多少条相交线
+  for (int i{0}; i < convex_edge.size() - 1; i++) {
+    Point p1 = convex_edge[i];
+    Point p2 =
+        convex_edge[(i + 1) % convex_edge.size()];  // 最后一个点与第一个点连线
+    if (p1.y() == p2.y())
+      continue;
+    if (0 < min<double>(p1.y(), p2.y()))
+      continue;  //在两个点下面
+    if (0 >= max<double>(p1.y(), p2.y()))
+      continue;  //在两个点上面
+    double x = (double)(0 - p1.y()) * (double)(p2.x() - p1.x()) /
+                   (double)(p2.y() - p1.y()) +
+               p1.x();  // 求交点的x坐标
+    if (x > 0) {
+      nCross++;  // 只统计p1p2与p向右射线的交点
+    }
+  }
+  return (nCross % 2 == 1);  //交点为偶数，点在多边形之外
+}
+
+double TestifyHalfLine::ComputeK(const Point& p1, const Point& p2) {
+  double disX = p2.x() - p1.x();
+  double disY = p2.y() - p1.y();
+  if (disX == 0) {
+    return disY > 0 ? INT_MAX : INT_MIN;
+  }
+  return disY / disX;
+}
+
+size_t TestifyHalfLine::FindNextEdge(std::vector<Point> convex_polygon,
+                                     size_t now, double nowK,
+                                     std::vector<Point> convex_edge,
+                                     bool flag) {
+  /**
+   * flag用于判断是不是找到横坐标最大的点，找到最大点之后再往回找
+   * **/
+  if (flag) {
+    int max = now + 1;
+    double maxK = ComputeK(convex_polygon[now], convex_polygon[max]);
+    for (unsigned i = now + 2; i < convex_polygon.size(); i++) {
+      double k = ComputeK(convex_polygon[now], convex_polygon[i]);
+      if (k > maxK && k <= nowK) {
+        max = i;
+        maxK = k;
+      }
+    }
+    nowK = maxK;
+    return max;
+  } else {
+    int max = now - 1;
+    double maxK = ComputeK(convex_polygon[max], convex_polygon[now]);
+    for (int i = now - 2; i >= 0; i--) {
+      double k = ComputeK(convex_polygon[i], convex_polygon[now]);
+      if (k > maxK && k <= nowK) {
+        max = i;
+        maxK = k;
+      }
+    }
+    nowK = maxK;
+    return max;
+  }
 }
 
 bool TestifyTriangle::Init(const std::vector<Point>& poly1,
