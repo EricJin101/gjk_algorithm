@@ -61,7 +61,7 @@ class TestifyTriangle {
   bool Init(const std::vector<Point>& poly1, const std::vector<Point>& poly2);
 
   /**
-   * 选择三条边，组成三条三角形，判断原点在不在其内
+   * 在minkowski差中任意选择三条边，组成三条三角形，判断原点在不在其内
    * */
   bool Check();
 
@@ -83,10 +83,6 @@ class TestifyTriangle {
  private:
   std::vector<Point> polygon1_;
   std::vector<Point> polygon2_;
-  std::vector<Point> simplex_;
-
-  Point direction_{1, 0};  // 可以任意选一个方向
-
   std::vector<Point> minkowski_diff_;  // 闵可夫斯基差
 };
 
