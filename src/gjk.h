@@ -2,28 +2,16 @@
 #define GJK_COLLISION_DETECT_H_
 
 #include <memory>
-
 #include <limits.h>
 #include <algorithm>
 #include "cmath"
-#include "data_struct.h"
 #include "iostream"
 #include "vector"
+#include "data_struct.h"
+
 using namespace std;
 namespace eric {
 namespace collision_detect {
-// struct point {
-//   double x;
-//   double y;
-// };
-// typedef vector<point> Polygon;
-// Polygon polygon1;
-// Polygon polygon2;
-// Polygon minkowski_diff;
-// Polygon Simplex;
-// point direction{};
-// bool collision_occurs{false};
-// string collision_method;
 
 class TestifyHalfLine {
  public:
@@ -50,7 +38,7 @@ class TestifyHalfLine {
   std::string name_ = "half line method";
   std::vector<Point> polygon1_;
   std::vector<Point> polygon2_;
-  std::vector<Point> minkowski_diff_;  // 闵可夫斯基差
+  std::vector<Point> minkowski_diff_;
 };
 
 class TestifyTriangle {
