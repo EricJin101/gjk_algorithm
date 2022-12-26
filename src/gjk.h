@@ -47,7 +47,7 @@ class TestifyTriangle {
   bool Init(const std::vector<Point>& poly1, const std::vector<Point>& poly2);
 
   /**
-   * 在minkowski差中任意选择三条边，组成三条三角形，判断原点在不在其内
+   * @brief: 在minkowski差中任意选择三条边，组成三条三角形，判断原点在不在其内
    * */
   bool Check();
 
@@ -78,13 +78,13 @@ class GJK {
   GJK(){};
   bool Init(const std::vector<Point>& poly1, const std::vector<Point>& poly2);
   /**
-   * @breif: 给两定多边形, 判断是否相交
+   * @brief: 给两定多边形, 判断是否相交
    * */
   bool Check();
 
  private:
   /**
-   * @breif: 求minkowski差,两个多边形顶点求差, 并去除相同点, 填入minkowski_diff
+   * @brief: 求minkowski差,两个多边形顶点求差, 并去除相同点, 填入minkowski_diff
    *         如 (4, 11) - (5, 7) = (-1, 4)
    *            (11, 11) - (12, 7) = (-1, 4)
    *            这两个点的minkowski差相同
