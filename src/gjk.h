@@ -71,9 +71,13 @@ class GJK {
 
  private:
   /**
-   * @breif: 求mincov diff
+   * @breif: 求minkowski差,两个多边形顶点求差, 并去除相同点, 填入minkowski_diff
+   *         如 (4, 11) - (5, 7) = (-1, 4)
+   *            (11, 11) - (12, 7) = (-1, 4)
+   *            这两个点的minkowski差相同
    * */
-  void GetMincovDiff();
+  void GetMinkowskiDiff();
+
   Point GetFarthestinDirection();
 
   /**
@@ -91,7 +95,7 @@ class GJK {
   std::vector<Point> polygon2_;
   std::vector<Point> simplex_;
 
-  Point direction_{1, 0};
+  Point direction_{1, 0};  // 可以任意选一个方向
 
   std::vector<Point> minkowski_diff_;  // 闵可夫斯基差
 };

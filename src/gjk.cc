@@ -263,8 +263,8 @@ bool GJK::Init(const std::vector<Point>& poly1,
   return true;
 }
 
-void GJK::GetMincovDiff() {
-  auto inMincov = [](std::vector<Point>& poly, Point pt) -> bool {
+void GJK::GetMinkowskiDiff() {
+  auto inMinkowski = [](std::vector<Point>& poly, Point pt) -> bool {
     for (auto pp : poly) {
       if (pp == pt) {
         return true;
@@ -279,11 +279,12 @@ void GJK::GetMincovDiff() {
   cout << "      {    :}       " << endl;
   cout << "        | |         " << endl;
   cout << "  merry christmas!  " << endl;
+  cout << "                  2022-12-23  " << endl;
 
   for (const auto& p1 : polygon1_) {
     for (const auto& p2 : polygon2_) {
-      Point tp{p1.x() - p2.x(), p1.y() - p2.y()};  // 顶点分别求差
-      if (!inMincov(minkowski_diff_, tp)) {
+      Point tp{p1.x() - p2.x(), p1.y() - p2.y()};
+      if (!inMinkowski(minkowski_diff_, tp)) {
         minkowski_diff_.emplace_back(tp);
       }
     }
@@ -291,7 +292,7 @@ void GJK::GetMincovDiff() {
 }
 
 bool GJK::Check() {
-  GetMincovDiff();
+  GetMinkowskiDiff();
   simplex_.emplace_back(GetFarthestinDirection());
   direction_ = direction_.Negate();
   while (true) {
@@ -315,7 +316,7 @@ Point GJK::GetFarthestinDirection() {
   double x_min = -1.0;
   Point far_pt;
   for (const auto& pt : minkowski_diff_) {
-    double inner_pro = pt.InnerProd(pt);
+    double inner_pro = pt.InnerProd(direction_);
     if (inner_pro > x_min) {
       x_min = inner_pro;
       far_pt = pt;
