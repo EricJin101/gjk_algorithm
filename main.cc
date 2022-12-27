@@ -3,7 +3,6 @@
 using namespace eric;
 
 int main() {
-  cout << "多边形已经输入完成。" << endl;
   std::unique_ptr<collision_detect::GJK> gjk_ = nullptr;
   gjk_ = std::make_unique<collision_detect::GJK>();
 
@@ -29,6 +28,7 @@ int main() {
   po2.emplace_back(tpt);
   tpt = {1.0, 0.0};
   po2.emplace_back(tpt);
+  cout << "多边形已经输入完成。" << endl;
 
   test_halfline_->Init(po1, po2);
   test_halfline_->Check();
