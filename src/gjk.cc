@@ -41,14 +41,14 @@ bool TestifyHalfLine::Check() {
   }
   sort(convex_polygon.begin(), convex_polygon.end(),
        [](const Point& p1, const Point& p2) { return p1.y() > p2.y(); });
-  //坐标系按照y从大到小排列、algorithm
+  // 坐标系按照y从大到小排列、algorithm
   stable_sort(convex_polygon.begin(), convex_polygon.end(),
               [](const Point& p1, const Point& p2) { return p1.x() < p2.x(); });
-  //左到右
+  // 左到右
   std::vector<Point> convex_edge;
-  int now = 0;  //在所有顶点中的位置
+  int now = 0;  // 在所有顶点中的位置
   double nowK = std::numeric_limits<double>::max();
-  //下一个边界点,在convex_polygon中的id
+  // 下一个边界点,在convex_polygon中的id
   Point next_point;
   next_point = convex_polygon[now];
   bool flag{true};
@@ -72,7 +72,7 @@ bool TestifyHalfLine::Check() {
 }
 
 bool TestifyHalfLine::HalfLineMethod(std::vector<Point> convex_edge) {
-  int nCross = 0;  //多少条相交线
+  int nCross = 0;  // 多少条相交线
   for (int i{0}; i < convex_edge.size() - 1; i++) {
     Point p1 = convex_edge[i];
     Point p2 =
@@ -80,9 +80,9 @@ bool TestifyHalfLine::HalfLineMethod(std::vector<Point> convex_edge) {
     if (p1.y() == p2.y())
       continue;
     if (0 < min<double>(p1.y(), p2.y()))
-      continue;  //在两个点下面
+      continue;  // 在两个点下面
     if (0 >= max<double>(p1.y(), p2.y()))
-      continue;  //在两个点上面
+      continue;  // 在两个点上面
     double x = (double)(0 - p1.y()) * (double)(p2.x() - p1.x()) /
                    (double)(p2.y() - p1.y()) +
                p1.x();  // 求交点的x坐标
@@ -90,7 +90,7 @@ bool TestifyHalfLine::HalfLineMethod(std::vector<Point> convex_edge) {
       nCross++;  // 只统计p1p2与p向右射线的交点
     }
   }
-  return (nCross % 2 == 1);  //交点为偶数，点在多边形之外
+  return (nCross % 2 == 1);  // 交点为偶数，点在多边形之外
 }
 
 double TestifyHalfLine::ComputeK(const Point& p1, const Point& p2) {

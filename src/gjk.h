@@ -1,13 +1,15 @@
 #ifndef GJK_COLLISION_DETECT_H_
 #define GJK_COLLISION_DETECT_H_
 
-#include <memory>
 #include <limits.h>
+
 #include <algorithm>
+#include <memory>
+
 #include "cmath"
+#include "data_struct.h"
 #include "iostream"
 #include "vector"
-#include "data_struct.h"
 
 using namespace std;
 namespace eric {

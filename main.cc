@@ -32,8 +32,10 @@ int main() {
 
   test_halfline_->Init(po1, po2);
   test_halfline_->Check();
+
   test_triangle_->Init(po1, po2);
   test_triangle_->Check();
+
   gjk_->Init(po1, po2);
   gjk_->Check();
 
