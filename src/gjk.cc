@@ -254,9 +254,8 @@ bool GJK::Check() {
   while (true) {
     simplex_.emplace_back(GetFarthestinDirection());
     if (simplex_.back().InnerProd(direction_) < 0.0) {
-      // 在direction的投影距离为负数
-      // simplex最后一个点是direction方向的最远点
-      // 最远点都在direction的"后面"
+      // 全都在direction的正方向上，分离轴直接分开了
+      // 分离轴为与direciton垂直且经过原点的直线
       cout << "not inside" << endl;
       return false;
     } else {
@@ -310,10 +309,12 @@ bool GJK::OriginContained() {
       return true;
     }
   } else {
-    // 单纯形只有两个点时, 更新direction
+    // 单纯形只有两个点时, 更新direction两点垂线
     Point b = simplex_.front();
     Point ab = b - a;
     Point abPrep = CrossProduct(ab, a.Negate(), ab);
+    // ab x -a 右手定则 得到ad
+    // ad x ab 右手定则，得到的ae是与ab垂直且朝向原点方向
     direction_ = abPrep;
     return false;
   }
