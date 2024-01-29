@@ -295,12 +295,15 @@ bool GJK::OriginContained() {
     Point abPrep = CrossProduct(ac, ab, ab);
     Point acPrep = CrossProduct(ab, ac, ac);
     if ((abPrep.x() * (-a.x()) + abPrep.y() * (-a.y())) > 0.0) {
+      // abPrep方向上有原点
+      // 以ab为分离轴，原点在另一侧
       simplex_.erase(simplex_.begin());
       direction_.set_x(abPrep.x());
       direction_.set_y(abPrep.y());
       return false;
     } else {
       if ((acPrep.x() * (-a.x()) + acPrep.y() * (-a.y())) > 0.0) {
+        // 以ac为分离轴，原点在另一侧
         simplex_.erase(simplex_.begin() + 1);
         direction_.set_x(acPrep.x());
         direction_.set_y(acPrep.y());
@@ -314,7 +317,8 @@ bool GJK::OriginContained() {
     Point ab = b - a;
     Point abPrep = CrossProduct(ab, a.Negate(), ab);
     // ab x -a 右手定则 得到ad
-    // ad x ab 右手定则，得到的ae是与ab垂直且朝向原点方向
+    // ad x ab 右手定则，得到的ae是与ab垂直
+    // 且朝向原点方向
     direction_ = abPrep;
     return false;
   }
